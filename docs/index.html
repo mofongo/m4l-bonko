@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bonko — Transient-triggered modulation for Ableton Live</title>
+<meta name="description" content="Bonko is a Max for Live audio effect that detects transients (tuned for guitar) and fires mappable envelopes at any parameter in your Live set.">
+<style>
+  :root {
+    --bg: #141414;
+    --panel: #1f1f1f;
+    --surface: #2e2e2e;
+    --surface-2: #3a3a3a;
+    --line: #454545;
+    --text: #d9d9d9;
+    --dim: #8a8a8a;
+    --cyan: #17c2e8;
+    --amber: #f5a623;
+    --mono: "SF Mono", SFMono-Regular, ui-monospace, Menlo, Consolas, monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 24px; }
+
+  /* ---------- hero ---------- */
+  header { padding: 96px 0 48px; text-align: center; }
+  .kicker {
+    font-family: var(--mono); font-size: 13px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--dim);
+  }
+  h1 {
+    font-size: clamp(64px, 12vw, 120px); font-weight: 800;
+    letter-spacing: 0.06em; line-height: 1.05; margin: 8px 0 16px;
+    color: #f2f2f2;
+  }
+  h1 .dot { color: var(--amber); }
+  .tagline { font-size: clamp(17px, 2.4vw, 21px); color: var(--dim); max-width: 560px; margin: 0 auto 36px; }
+  .tagline strong { color: var(--text); font-weight: 600; }
+  .buttons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    display: inline-block; padding: 13px 26px; border-radius: 4px;
+    font-family: var(--mono); font-size: 14px; text-decoration: none;
+    letter-spacing: 0.03em; transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-primary { background: var(--cyan); color: #06282f; font-weight: 700; }
+  .btn-primary:hover { box-shadow: 0 4px 24px rgba(23,194,232,.35); }
+  .btn-ghost { border: 1px solid var(--line); color: var(--text); }
+  .btn-ghost:hover { border-color: var(--dim); }
+
+  /* ---------- device mock ---------- */
+  .mock-scroll { overflow-x: auto; padding: 24px 0 8px; }
+  .device {
+    width: 760px; margin: 0 auto; border-radius: 6px; overflow: hidden;
+    border: 1px solid #000; box-shadow: 0 24px 60px rgba(0,0,0,.5);
+    user-select: none;
+  }
+  .titlebar {
+    background: #bfdde6; color: #1a1a1a; display: flex; align-items: center;
+    gap: 8px; padding: 6px 10px; font-size: 13px; font-weight: 700;
+  }
+  .titlebar .orb { width: 14px; height: 14px; border-radius: 50%; background: var(--amber); border: 1px solid #7a5310; }
+  .panel { background: var(--panel); display: flex; padding: 10px; gap: 8px; }
+  .module {
+    background: var(--surface); border-radius: 4px; padding: 8px;
+    display: flex; flex-direction: column; gap: 6px; flex: 1;
+  }
+  .module.detect { flex: 0 0 150px; }
+  .mod-title { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; color: var(--dim); }
+  .detect-row { display: flex; gap: 10px; align-items: flex-start; }
+  .meter { display: flex; flex-direction: column-reverse; gap: 2px; padding-top: 2px; }
+  .meter i { width: 8px; height: 5px; background: #4a4a4a; border-radius: 1px; }
+  .meter i.on { background: #52c14b; }
+  .meter i.hot { background: var(--amber); }
+  .led {
+    width: 14px; height: 14px; border-radius: 50%; background: #3a3a3a;
+    border: 1px solid #222; margin-top: 2px;
+    animation: blink 2.4s infinite;
+  }
+  @keyframes blink {
+    0%, 4%   { background: var(--amber); box-shadow: 0 0 10px var(--amber); }
+    5%, 39%  { background: #3a3a3a; box-shadow: none; }
+    40%, 44% { background: var(--amber); box-shadow: 0 0 10px var(--amber); }
+    45%, 74% { background: #3a3a3a; box-shadow: none; }
+    75%, 79% { background: var(--amber); box-shadow: 0 0 10px var(--amber); }
+    80%, 100%{ background: #3a3a3a; box-shadow: none; }
+  }
+  .knobs { display: flex; flex-wrap: wrap; gap: 6px 10px; justify-content: center; }
+  .knob { display: flex; flex-direction: column; align-items: center; width: 44px; }
+  .knob .cap {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #4d4d4d, #262626 70%);
+    border: 2px solid #1b1b1b; position: relative;
+  }
+  .knob .cap::before {
+    content: ""; position: absolute; inset: -5px; border-radius: 50%;
+    background: conic-gradient(from 210deg, var(--cyan) calc(var(--fill, 60) * 1% * 0.83), #4b4b4b 0 83%, transparent 83%);
+    -webkit-mask: radial-gradient(circle, transparent 58%, #000 60%);
+    mask: radial-gradient(circle, transparent 58%, #000 60%);
+  }
+  .knob .cap::after {
+    content: ""; position: absolute; left: 50%; top: 10%; width: 2px; height: 38%;
+    background: #ddd; transform-origin: 50% 105%;
+    transform: translateX(-50%) rotate(calc(var(--fill, 60) * 3deg - 150deg));
+  }
+  .knob label { font-family: var(--mono); font-size: 9px; color: var(--dim); margin-top: 3px; }
+  .knob .val { font-family: var(--mono); font-size: 9px; color: var(--text); }
+  .maprow { display: flex; gap: 6px; align-items: center; }
+  .mapbtn {
+    font-family: var(--mono); font-size: 10px; background: var(--surface-2);
+    border: 1px solid var(--line); color: var(--text); border-radius: 3px; padding: 2px 8px;
+  }
+  .maplabel {
+    flex: 1; font-family: var(--mono); font-size: 10px; color: var(--dim);
+    background: #262626; border-radius: 3px; padding: 2px 6px; white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
+  }
+  .maplabel.mapped { color: var(--cyan); }
+  .rnd {
+    align-self: center; font-family: var(--mono); font-size: 9px; letter-spacing: .1em;
+    border: 1px solid var(--line); border-radius: 3px; padding: 1px 10px; color: var(--dim);
+  }
+  .rnd.on { color: var(--amber); border-color: var(--amber); }
+
+  /* mapped parameter bar under mock */
+  .paramdemo { width: 760px; max-width: 100%; margin: 18px auto 0; }
+  .paramdemo .pd-label {
+    display: flex; justify-content: space-between; font-family: var(--mono);
+    font-size: 11px; color: var(--dim); margin-bottom: 6px;
+  }
+  .pd-track { height: 8px; background: #262626; border-radius: 4px; overflow: hidden; }
+  .pd-fill {
+    height: 100%; background: var(--cyan); border-radius: 4px;
+    transform-origin: left; animation: envl 2.4s infinite;
+  }
+  @keyframes envl {
+    0%       { transform: scaleX(0.05); }
+    1.5%     { transform: scaleX(1); }
+    30%      { transform: scaleX(0.05); }
+    40%      { transform: scaleX(0.05); }
+    41.5%    { transform: scaleX(0.85); }
+    65%      { transform: scaleX(0.05); }
+    75%      { transform: scaleX(0.05); }
+    76.5%    { transform: scaleX(1); }
+    98%      { transform: scaleX(0.05); }
+    100%     { transform: scaleX(0.05); }
+  }
+  .caption { text-align: center; font-size: 13px; color: var(--dim); margin-top: 14px; }
+
+  /* ---------- sections ---------- */
+  section { padding: 72px 0; }
+  section + section { border-top: 1px solid #242424; }
+  h2 {
+    font-family: var(--mono); font-size: 14px; letter-spacing: .18em;
+    text-transform: uppercase; color: var(--cyan); margin-bottom: 28px;
+  }
+  .cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+  .col h3 { font-size: 18px; margin-bottom: 8px; color: #f0f0f0; }
+  .col p { font-size: 15px; color: var(--dim); }
+  .col p code, .steps code {
+    font-family: var(--mono); font-size: 13px; color: var(--text);
+    background: #262626; padding: 1px 6px; border-radius: 3px;
+  }
+  .steps { list-style: none; counter-reset: step; max-width: 640px; }
+  .steps li {
+    counter-increment: step; position: relative; padding: 0 0 22px 56px;
+    font-size: 16px; color: var(--text);
+  }
+  .steps li span { color: var(--dim); font-size: 14px; display: block; }
+  .steps li::before {
+    content: counter(step); position: absolute; left: 0; top: 0;
+    width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono); font-size: 15px; color: var(--cyan);
+  }
+  footer {
+    border-top: 1px solid #242424; padding: 40px 0 64px; text-align: center;
+    font-size: 13px; color: var(--dim);
+  }
+  footer a { color: var(--text); }
+  @media (max-width: 760px) {
+    .cols { grid-template-columns: 1fr; }
+    header { padding-top: 64px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="wrap">
+  <div class="kicker">Max for Live · Audio Effect</div>
+  <h1>BONKO<span class="dot">.</span></h1>
+  <p class="tagline"><strong>Transient-triggered modulation for Ableton Live.</strong><br>
+  Play your guitar — your effects play along.</p>
+  <div class="buttons">
+    <a class="btn btn-primary" href="https://github.com/mofongo/m4l-bonko/raw/main/Bonko.amxd">Download Bonko.amxd</a>
+    <a class="btn btn-ghost" href="https://github.com/mofongo/m4l-bonko">View on GitHub</a>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="mock-scroll">
+    <div class="device" aria-label="Mock of the Bonko device UI">
+      <div class="titlebar"><span class="orb"></span>Bonko</div>
+      <div class="panel">
+        <div class="module detect">
+          <div class="mod-title">BONKO DETECT</div>
+          <div class="detect-row">
+            <div class="meter">
+              <i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i>
+              <i class="on"></i><i class="hot"></i><i></i><i></i><i></i><i></i>
+            </div>
+            <div class="led"></div>
+            <div class="knob" style="--fill:55"><div class="cap"></div><label>Focus</label><span class="val">3.25 kHz</span></div>
+          </div>
+          <div class="knobs">
+            <div class="knob" style="--fill:65"><div class="cap"></div><label>Sens</label><span class="val">65 %</span></div>
+            <div class="knob" style="--fill:20"><div class="cap"></div><label>Retrig</label><span class="val">60 ms</span></div>
+          </div>
+        </div>
+
+        <div class="module">
+          <div class="maprow"><span class="mapbtn">Map</span><span class="maplabel mapped">Dry/Wet</span></div>
+          <div class="knobs">
+            <div class="knob" style="--fill:100"><div class="cap"></div><label>Prob</label><span class="val">100 %</span></div>
+            <div class="knob" style="--fill:5"><div class="cap"></div><label>Atk</label><span class="val">1 ms</span></div>
+            <div class="knob" style="--fill:35"><div class="cap"></div><label>Dec</label><span class="val">250 ms</span></div>
+            <div class="knob" style="--fill:0"><div class="cap"></div><label>Min</label><span class="val">0 %</span></div>
+            <div class="knob" style="--fill:100"><div class="cap"></div><label>Max</label><span class="val">100 %</span></div>
+          </div>
+          <span class="rnd">RND</span>
+        </div>
+
+        <div class="module">
+          <div class="maprow"><span class="mapbtn">Map</span><span class="maplabel mapped">Frequency</span></div>
+          <div class="knobs">
+            <div class="knob" style="--fill:50"><div class="cap"></div><label>Prob</label><span class="val">50 %</span></div>
+            <div class="knob" style="--fill:15"><div class="cap"></div><label>Atk</label><span class="val">12 ms</span></div>
+            <div class="knob" style="--fill:70"><div class="cap"></div><label>Dec</label><span class="val">1.2 s</span></div>
+            <div class="knob" style="--fill:20"><div class="cap"></div><label>Min</label><span class="val">20 %</span></div>
+            <div class="knob" style="--fill:90"><div class="cap"></div><label>Max</label><span class="val">90 %</span></div>
+          </div>
+          <span class="rnd on">RND</span>
+        </div>
+
+        <div class="module">
+          <div class="maprow"><span class="mapbtn">Map</span><span class="maplabel mapped">Grain Size</span></div>
+          <div class="knobs">
+            <div class="knob" style="--fill:75"><div class="cap"></div><label>Prob</label><span class="val">75 %</span></div>
+            <div class="knob" style="--fill:40"><div class="cap"></div><label>Atk</label><span class="val">80 ms</span></div>
+            <div class="knob" style="--fill:55"><div class="cap"></div><label>Dec</label><span class="val">600 ms</span></div>
+            <div class="knob" style="--fill:100"><div class="cap"></div><label>Min</label><span class="val">100 %</span></div>
+            <div class="knob" style="--fill:10"><div class="cap"></div><label>Max</label><span class="val">10 %</span></div>
+          </div>
+          <span class="rnd">RND</span>
+        </div>
+
+        <div class="module">
+          <div class="maprow"><span class="mapbtn">Map</span><span class="maplabel">Map a parameter</span></div>
+          <div class="knobs">
+            <div class="knob" style="--fill:100"><div class="cap"></div><label>Prob</label><span class="val">100 %</span></div>
+            <div class="knob" style="--fill:5"><div class="cap"></div><label>Atk</label><span class="val">1 ms</span></div>
+            <div class="knob" style="--fill:35"><div class="cap"></div><label>Dec</label><span class="val">250 ms</span></div>
+            <div class="knob" style="--fill:0"><div class="cap"></div><label>Min</label><span class="val">0 %</span></div>
+            <div class="knob" style="--fill:100"><div class="cap"></div><label>Max</label><span class="val">100 %</span></div>
+          </div>
+          <span class="rnd">RND</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="paramdemo">
+    <div class="pd-label"><span>Reverb → Dry/Wet</span><span>mapped</span></div>
+    <div class="pd-track"><div class="pd-fill"></div></div>
+  </div>
+  <p class="caption">Every pick attack fires the LED — and every mapped parameter follows.</p>
+</div>
+
+<section>
+  <div class="wrap">
+    <h2>How it works</h2>
+    <div class="cols">
+      <div class="col">
+        <h3>Detect</h3>
+        <p>An onset detector tuned for guitar. <code>Focus</code> listens to the high-frequency
+        bite of the pick attack, <code>Sens</code> sets how easily it fires, and
+        <code>Retrig</code> keeps fast strumming from machine-gunning triggers.
+        A meter and trigger LED show exactly what it hears.</p>
+      </div>
+      <div class="col">
+        <h3>Shape</h3>
+        <p>Four independent slots. Each transient fires an attack/decay envelope with its own
+        <code>Min</code>/<code>Max</code> range — set Min above Max to duck instead of swell.
+        <code>Prob</code> makes slots fire by chance, and <code>Rnd</code> rolls new random
+        envelope times on every hit.</p>
+      </div>
+      <div class="col">
+        <h3>Map</h3>
+        <p>Click <code>Map</code>, then click any parameter on any device in your Live set —
+        filter cutoff, reverb mix, grain size, anything. Powered by Live's native parameter
+        mapping, so bindings survive saving and reloading your set.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Install</h2>
+    <ol class="steps">
+      <li>Download <code>Bonko.amxd</code>
+        <span>One self-contained file — no externals, no packages, Apple Silicon native.</span></li>
+      <li>Drop it on an audio track in Ableton Live
+        <span>Anywhere in the chain. Your audio passes through untouched.</span></li>
+      <li>Map something and play
+        <span>Raise Sens until the LED follows your picking, then let your effects react.</span></li>
+    </ol>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    Bonko — a Max for Live device by <a href="https://github.com/mofongo">mofongo</a> ·
+    <a href="https://github.com/mofongo/m4l-bonko">Source on GitHub</a><br>
+    Requires Ableton Live 11+ with Max for Live.
+  </div>
+</footer>
+
+</body>
+</html>
