@@ -85,6 +85,19 @@ This step also *improved* the design: the `live.remote~` doc revealed the
 parameter's range and eliminated an entire min/max-query-and-scale subgraph
 from `bonko.map.maxpat`.
 
+**3. Mining Ableton's shipped patchers for canonical patterns.** Object docs
+tell you what an object *can* do, not which object the platform intends you
+to use. The first map implementation hand-rolled `live.observer` + `pattr` +
+manual `id` messages — it resolved parameter names but never established the
+`live.remote~` binding. The fix came from grepping Live's own install for
+working examples: `Max.app/.../packages/Max for Live/clippings/Live API
+Snippets/Device.DeviceParameterMap.maxpat` is Ableton's official Map-button
+reference, and it revealed the purpose-built `live.map` object (arm, click
+capture, binding, naming, and `_persistence: 1` save/reload in one box).
+When implementing any Live-integration behavior, search those clippings and
+the Builtin/Devices folders for the canonical pattern *before* composing it
+from primitives.
+
 ## The .amxd step
 
 A Max for Live device is the same patcher JSON wrapped in a small binary
