@@ -162,6 +162,18 @@ the set, undo-friendly.
 | Per-slot logic in v1 | Probability only | Cheap, immediately useful; sequencing/distribution modes are v2 via the trigger bus seam |
 | Structure | Modular bpatchers | Slot built once, instantiated 4×; v2 logic touches only the trigger bus |
 
+## Post-v1 Additions
+
+- **Rnd toggle per slot** (user request during verification): when on, each
+  trigger assigns a fresh random Attack in [0 .. Atk dial] and random Decay in
+  [10 ms .. Dec dial] — the dials act as ceilings. Toggling off restores exact
+  dial values. Implemented via a gate routing the trigger to either the stored
+  dial pair or a random-generation path, both writing the same `zl.reg`.
+- **Mapping mechanism** (verification fix): hand-rolled observer/pattr chain
+  replaced with Ableton's canonical `live.map @strict 1` → `live.remote~
+  @normalized 1` pattern (both with `_persistence: 1`). Label shows parameter
+  name only. Map toggle off = full unmap.
+
 ## V2 Ideas (out of scope, recorded for the seam design)
 
 - Trigger-distribution modes on the bus: All / Round-robin / Random pick.
