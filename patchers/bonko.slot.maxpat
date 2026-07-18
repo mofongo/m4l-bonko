@@ -1,0 +1,48 @@
+{
+  "patcher": {
+    "fileversion": 1,
+    "appversion": {"major": 8, "minor": 6, "revision": 2, "architecture": "x64", "modernui": 1},
+    "classnamespace": "box",
+    "rect": [100.0, 100.0, 700.0, 560.0],
+    "openinpresentation": 1,
+    "boxes": [
+      {"box": {"id": "obj-1", "maxclass": "newobj", "text": "r ---trig", "numinlets": 0, "numoutlets": 1, "outlettype": [""], "patching_rect": [30.0, 30.0, 60.0, 22.0]}},
+      {"box": {"id": "obj-2", "maxclass": "newobj", "text": "t b", "numinlets": 1, "numoutlets": 1, "outlettype": ["bang"], "patching_rect": [30.0, 70.0, 32.0, 22.0]}},
+      {"box": {"id": "obj-3", "maxclass": "newobj", "text": "random 100", "numinlets": 2, "numoutlets": 1, "outlettype": ["int"], "patching_rect": [30.0, 110.0, 74.0, 22.0]}},
+      {"box": {"id": "obj-4", "maxclass": "newobj", "text": "< 100.", "numinlets": 2, "numoutlets": 1, "outlettype": ["int"], "patching_rect": [30.0, 150.0, 50.0, 22.0]}},
+      {"box": {"id": "obj-5", "maxclass": "live.dial", "varname": "prob", "parameter_enable": 1, "numinlets": 1, "numoutlets": 2, "outlettype": ["", "float"], "patching_rect": [160.0, 90.0, 44.0, 48.0], "presentation": 1, "presentation_rect": [8.0, 34.0, 40.0, 48.0], "saved_attribute_attributes": {"valueof": {"parameter_longname": "Prob", "parameter_shortname": "Prob", "parameter_type": 0, "parameter_unitstyle": 5, "parameter_range": [0.0, 100.0], "parameter_initial_enable": 1, "parameter_initial": [100.0]}}}},
+      {"box": {"id": "obj-6", "maxclass": "newobj", "text": "sel 1", "numinlets": 2, "numoutlets": 2, "outlettype": ["bang", ""], "patching_rect": [30.0, 190.0, 40.0, 22.0]}},
+      {"box": {"id": "obj-7", "maxclass": "newobj", "text": "zl.reg 1. 250.", "numinlets": 2, "numoutlets": 2, "outlettype": ["", ""], "patching_rect": [30.0, 230.0, 90.0, 22.0]}},
+      {"box": {"id": "obj-8", "maxclass": "message", "text": "1. $1 0. $2", "numinlets": 2, "numoutlets": 1, "outlettype": [""], "patching_rect": [30.0, 270.0, 80.0, 22.0]}},
+      {"box": {"id": "obj-9", "maxclass": "newobj", "text": "line~", "numinlets": 2, "numoutlets": 2, "outlettype": ["signal", "bang"], "patching_rect": [30.0, 310.0, 44.0, 22.0]}},
+      {"box": {"id": "obj-10", "maxclass": "newobj", "text": "scale~ 0. 1. 0. 1.", "numinlets": 5, "numoutlets": 1, "outlettype": ["signal"], "patching_rect": [30.0, 360.0, 110.0, 22.0]}},
+      {"box": {"id": "obj-11", "maxclass": "bpatcher", "name": "bonko.map.maxpat", "numinlets": 1, "numoutlets": 0, "patching_rect": [30.0, 420.0, 300.0, 60.0], "presentation": 1, "presentation_rect": [4.0, 4.0, 130.0, 26.0], "viewvisibility": 1}},
+      {"box": {"id": "obj-12", "maxclass": "live.dial", "varname": "atk", "parameter_enable": 1, "numinlets": 1, "numoutlets": 2, "outlettype": ["", "float"], "patching_rect": [230.0, 90.0, 44.0, 48.0], "presentation": 1, "presentation_rect": [52.0, 34.0, 40.0, 48.0], "saved_attribute_attributes": {"valueof": {"parameter_longname": "Atk", "parameter_shortname": "Atk", "parameter_type": 0, "parameter_unitstyle": 2, "parameter_range": [0.0, 500.0], "parameter_exponent": 2.0, "parameter_initial_enable": 1, "parameter_initial": [1.0]}}}},
+      {"box": {"id": "obj-13", "maxclass": "live.dial", "varname": "dec", "parameter_enable": 1, "numinlets": 1, "numoutlets": 2, "outlettype": ["", "float"], "patching_rect": [300.0, 90.0, 44.0, 48.0], "presentation": 1, "presentation_rect": [96.0, 34.0, 40.0, 48.0], "saved_attribute_attributes": {"valueof": {"parameter_longname": "Dec", "parameter_shortname": "Dec", "parameter_type": 0, "parameter_unitstyle": 2, "parameter_range": [10.0, 5000.0], "parameter_exponent": 2.0, "parameter_initial_enable": 1, "parameter_initial": [250.0]}}}},
+      {"box": {"id": "obj-14", "maxclass": "newobj", "text": "pak 1. 250.", "numinlets": 2, "numoutlets": 1, "outlettype": [""], "patching_rect": [230.0, 160.0, 74.0, 22.0]}},
+      {"box": {"id": "obj-15", "maxclass": "live.dial", "varname": "envmin", "parameter_enable": 1, "numinlets": 1, "numoutlets": 2, "outlettype": ["", "float"], "patching_rect": [400.0, 90.0, 44.0, 48.0], "presentation": 1, "presentation_rect": [30.0, 90.0, 40.0, 48.0], "saved_attribute_attributes": {"valueof": {"parameter_longname": "Min", "parameter_shortname": "Min", "parameter_type": 0, "parameter_unitstyle": 5, "parameter_range": [0.0, 100.0], "parameter_initial_enable": 1, "parameter_initial": [0.0]}}}},
+      {"box": {"id": "obj-16", "maxclass": "newobj", "text": "/ 100.", "numinlets": 2, "numoutlets": 1, "outlettype": ["float"], "patching_rect": [400.0, 160.0, 46.0, 22.0]}},
+      {"box": {"id": "obj-17", "maxclass": "live.dial", "varname": "envmax", "parameter_enable": 1, "numinlets": 1, "numoutlets": 2, "outlettype": ["", "float"], "patching_rect": [470.0, 90.0, 44.0, 48.0], "presentation": 1, "presentation_rect": [74.0, 90.0, 40.0, 48.0], "saved_attribute_attributes": {"valueof": {"parameter_longname": "Max", "parameter_shortname": "Max", "parameter_type": 0, "parameter_unitstyle": 5, "parameter_range": [0.0, 100.0], "parameter_initial_enable": 1, "parameter_initial": [100.0]}}}},
+      {"box": {"id": "obj-18", "maxclass": "newobj", "text": "/ 100.", "numinlets": 2, "numoutlets": 1, "outlettype": ["float"], "patching_rect": [470.0, 160.0, 46.0, 22.0]}}
+    ],
+    "lines": [
+      {"patchline": {"source": ["obj-1", 0], "destination": ["obj-2", 0]}},
+      {"patchline": {"source": ["obj-2", 0], "destination": ["obj-3", 0]}},
+      {"patchline": {"source": ["obj-3", 0], "destination": ["obj-4", 0]}},
+      {"patchline": {"source": ["obj-5", 0], "destination": ["obj-4", 1]}},
+      {"patchline": {"source": ["obj-4", 0], "destination": ["obj-6", 0]}},
+      {"patchline": {"source": ["obj-6", 0], "destination": ["obj-7", 0]}},
+      {"patchline": {"source": ["obj-12", 0], "destination": ["obj-14", 0]}},
+      {"patchline": {"source": ["obj-13", 0], "destination": ["obj-14", 1]}},
+      {"patchline": {"source": ["obj-14", 0], "destination": ["obj-7", 1]}},
+      {"patchline": {"source": ["obj-7", 0], "destination": ["obj-8", 0]}},
+      {"patchline": {"source": ["obj-8", 0], "destination": ["obj-9", 0]}},
+      {"patchline": {"source": ["obj-9", 0], "destination": ["obj-10", 0]}},
+      {"patchline": {"source": ["obj-15", 0], "destination": ["obj-16", 0]}},
+      {"patchline": {"source": ["obj-16", 0], "destination": ["obj-10", 3]}},
+      {"patchline": {"source": ["obj-17", 0], "destination": ["obj-18", 0]}},
+      {"patchline": {"source": ["obj-18", 0], "destination": ["obj-10", 4]}},
+      {"patchline": {"source": ["obj-10", 0], "destination": ["obj-11", 0]}}
+    ]
+  }
+}
