@@ -24,10 +24,14 @@ def validate(path):
         return [f"{path}: no top-level 'patcher' key"]
     longnames = []
     _check_patcher(patcher, path, errors, longnames)
+    _flag_dupes(longnames, path, errors)
+    return errors
+
+
+def _flag_dupes(longnames, ctx, errors):
     dupes = sorted({n for n in longnames if longnames.count(n) > 1})
     if dupes:
-        errors.append(f"{path}: duplicate parameter_longname(s): {dupes}")
-    return errors
+        errors.append(f"{ctx}: duplicate parameter_longname(s): {dupes}")
 
 
 def _check_patcher(patcher, ctx, errors, longnames):
@@ -53,7 +57,16 @@ def _check_patcher(patcher, ctx, errors, longnames):
             errors.append(f"{ctx}: live.* box {box.get('id')} missing parameter_enable")
         sub = box.get("patcher")
         if sub:
-            _check_patcher(sub, f"{ctx}/{box.get('id')}", errors, longnames)
+            if box.get("maxclass") == "bpatcher":
+                # An embedded bpatcher is its own parameter scope: Max
+                # auto-renames longname conflicts across instances at load,
+                # so duplicates between copies are legal. Duplicates within
+                # one embedded patcher are still flagged.
+                sub_names = []
+                _check_patcher(sub, f"{ctx}/{box.get('id')}", errors, sub_names)
+                _flag_dupes(sub_names, f"{ctx}/{box.get('id')}", errors)
+            else:
+                _check_patcher(sub, f"{ctx}/{box.get('id')}", errors, longnames)
 
 
 if __name__ == "__main__":

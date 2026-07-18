@@ -1,9 +1,23 @@
 # How Bonko Was Built Without a Patch-Editing Server
 
-The maxmsp MCP server used in this project can inspect patches and look up
-documentation, but it cannot create, edit, or save patcher files. Bonko was
-built anyway, because **Max patches are just JSON text files**. This doc
-records the method so it can be repeated.
+The maxmsp MCP server used in this project can create, wire, and edit objects
+live — but only inside the one patch that hosts its MaxMSP-Agent, and it
+cannot write or save patcher files on disk. Bonko was built without it,
+because **Max patches are just JSON text files**. This doc records the method
+so it can be repeated.
+
+**When to use which workflow:**
+
+- **Live MCP editing** (agent-hosted patch; see `m4l-polygrid/CLAUDE.md` for
+  the full workflow) — best for debugging an existing patch interactively:
+  you can probe objects with messages/bangs, hear results immediately, and
+  read real wiring back with `get_objects_in_patch`. Constraints: edits are
+  trapped in the agent's window, live in memory until a human saves, and
+  `set_object_attribute` can't move objects after creation.
+- **Offline JSON authoring** (this doc) — best for building patchers from
+  scratch, batch edits, and anything that should be committable and testable
+  without Max running. Constraint: blind to runtime behavior; structure is
+  validated, semantics are verified later in Live.
 
 ## The core insight
 
@@ -55,7 +69,10 @@ tests in `tests/`). It can't run DSP, but it catches the failure modes typical
 of hand-written patches: invalid JSON, duplicate box ids, patch cords pointing
 at nonexistent boxes, missing rects, duplicate `parameter_longname`s, and
 `live.*` UI objects missing `parameter_enable`. Every patcher file was
-validated before being committed.
+validated before being committed. One blind spot: the validator has no object
+database, so it cannot check that an inlet/outlet *index* exists on the target
+object — a cord to inlet 3 of a two-inlet object passes. That's exactly what
+the `get_object_doc` step below covers.
 
 **2. Doc-checking every load-bearing object assumption** via the MCP server's
 `get_object_doc` (the one capability it does provide, and it needs no open
@@ -76,11 +93,15 @@ container. Hex-dumping Ableton's blank device
 Devices/Max Audio Effect.amxd`) confirmed the layout:
 
 ```
-"ampf" | uint32le 4 | "aaaa" | "meta" | uint32le 4 | 4 bytes | "ptch" | uint32le json-length | <patcher JSON>
+"ampf" | uint32le 4 | type code | "meta" | uint32le 4 | uint32le 0 | "ptch" | uint32le json-length | <patcher JSON>
 ```
 
-(`aaaa` marks an audio effect; instruments and MIDI effects use different
-type codes, which is why the reference must be the same device type.)
+The type code after `ampf` is `aaaa` for an audio effect, `mmmm` for a MIDI
+effect, and `iiii` for an instrument (verified by hex-dumping all three blank
+devices shipped with Live 12) — which is why the reference must be the same
+device type. The 4-byte `meta` payload is zero in all three blanks; its
+meaning is unknown, another reason to transplant the header rather than
+synthesize it.
 
 `tools/make_amxd.py` transplants that header rather than hard-coding it: it
 reads a reference `.amxd`, finds where the JSON begins, verifies the 4 bytes

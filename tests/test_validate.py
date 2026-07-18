@@ -27,6 +27,13 @@ def test_duplicate_param_longname_fails():
     assert any("duplicate parameter_longname" in e for e in errs), f"got: {errs}"
 
 
+def test_embedded_bpatcher_longnames_are_separate_scopes():
+    # Two embedded copies of the same abstraction share longnames legally
+    # (Max auto-renames per instance at load) — must NOT be flagged.
+    errs = validate(os.path.join(FIX, "embedded_dup_ok.maxpat"))
+    assert errs == [], f"expected no errors, got: {errs}"
+
+
 if __name__ == "__main__":
     fails = 0
     for name, fn in sorted(globals().items()):

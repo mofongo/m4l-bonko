@@ -11,8 +11,12 @@ and rewrites that length for the new payload.
 Usage: python3 tools/make_amxd.py <reference.amxd> <input.maxpat> <output.amxd>
 """
 import json
+import os
 import struct
 import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from inline_bpatchers import inline  # noqa: E402
 
 
 def build(ref_path, maxpat_path, out_path):
@@ -36,7 +40,12 @@ def build(ref_path, maxpat_path, out_path):
             "Use the manual fallback (paste patch into a blank device in Max)."
         )
     with open(maxpat_path) as f:
-        payload = json.dumps(json.load(f)).encode("utf-8")
+        data = json.load(f)
+    # Embed all bpatcher file references so the device is self-contained
+    # (Max never searches subfolders for abstractions).
+    base = os.path.dirname(os.path.abspath(maxpat_path))
+    inline(data["patcher"], [base, os.path.join(base, "patchers")])
+    payload = json.dumps(data).encode("utf-8")
     header[-4:] = struct.pack(endian, len(payload))
     with open(out_path, "wb") as f:
         f.write(bytes(header) + payload)
