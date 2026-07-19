@@ -54,102 +54,11 @@
   .btn-ghost { border: 1px solid var(--line); color: var(--text); }
   .btn-ghost:hover { border-color: var(--dim); }
 
-  /* ---------- device mock ---------- */
-  .mock-scroll { overflow-x: auto; padding: 24px 0 8px; }
-  .device {
-    width: 760px; margin: 0 auto; border-radius: 6px; overflow: hidden;
-    border: 1px solid #000; box-shadow: 0 24px 60px rgba(0,0,0,.5);
-    user-select: none;
-  }
-  .titlebar {
-    background: #bfdde6; color: #1a1a1a; display: flex; align-items: center;
-    gap: 8px; padding: 6px 10px; font-size: 13px; font-weight: 700;
-  }
-  .titlebar .orb { width: 14px; height: 14px; border-radius: 50%; background: var(--amber); border: 1px solid #7a5310; }
-  .panel { background: var(--panel); display: flex; padding: 10px; gap: 8px; }
-  .module {
-    background: var(--surface); border-radius: 4px; padding: 8px;
-    display: flex; flex-direction: column; gap: 6px; flex: 1;
-  }
-  .module.detect { flex: 0 0 150px; }
-  .mod-title { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; color: var(--dim); }
-  .detect-row { display: flex; gap: 10px; align-items: flex-start; }
-  .meter { display: flex; flex-direction: column-reverse; gap: 2px; padding-top: 2px; }
-  .meter i { width: 8px; height: 5px; background: #4a4a4a; border-radius: 1px; }
-  .meter i.on { background: #52c14b; }
-  .meter i.hot { background: var(--amber); }
-  .led {
-    width: 14px; height: 14px; border-radius: 50%; background: #3a3a3a;
-    border: 1px solid #222; margin-top: 2px;
-    animation: blink 2.4s infinite;
-  }
-  @keyframes blink {
-    0%, 4%   { background: var(--amber); box-shadow: 0 0 10px var(--amber); }
-    5%, 39%  { background: #3a3a3a; box-shadow: none; }
-    40%, 44% { background: var(--amber); box-shadow: 0 0 10px var(--amber); }
-    45%, 74% { background: #3a3a3a; box-shadow: none; }
-    75%, 79% { background: var(--amber); box-shadow: 0 0 10px var(--amber); }
-    80%, 100%{ background: #3a3a3a; box-shadow: none; }
-  }
-  .knobs { display: flex; flex-wrap: wrap; gap: 6px 10px; justify-content: center; }
-  .knob { display: flex; flex-direction: column; align-items: center; width: 44px; }
-  .knob .cap {
-    width: 30px; height: 30px; border-radius: 50%;
-    background: radial-gradient(circle at 35% 30%, #4d4d4d, #262626 70%);
-    border: 2px solid #1b1b1b; position: relative;
-  }
-  .knob .cap::before {
-    content: ""; position: absolute; inset: -5px; border-radius: 50%;
-    background: conic-gradient(from 210deg, var(--cyan) calc(var(--fill, 60) * 1% * 0.83), #4b4b4b 0 83%, transparent 83%);
-    -webkit-mask: radial-gradient(circle, transparent 58%, #000 60%);
-    mask: radial-gradient(circle, transparent 58%, #000 60%);
-  }
-  .knob .cap::after {
-    content: ""; position: absolute; left: 50%; top: 10%; width: 2px; height: 38%;
-    background: #ddd; transform-origin: 50% 105%;
-    transform: translateX(-50%) rotate(calc(var(--fill, 60) * 3deg - 150deg));
-  }
-  .knob label { font-family: var(--mono); font-size: 9px; color: var(--dim); margin-top: 3px; }
-  .knob .val { font-family: var(--mono); font-size: 9px; color: var(--text); }
-  .maprow { display: flex; gap: 6px; align-items: center; }
-  .mapbtn {
-    font-family: var(--mono); font-size: 10px; background: var(--surface-2);
-    border: 1px solid var(--line); color: var(--text); border-radius: 3px; padding: 2px 8px;
-  }
-  .maplabel {
-    flex: 1; font-family: var(--mono); font-size: 10px; color: var(--dim);
-    background: #262626; border-radius: 3px; padding: 2px 6px; white-space: nowrap;
-    overflow: hidden; text-overflow: ellipsis;
-  }
-  .maplabel.mapped { color: var(--cyan); }
-  .rnd {
-    align-self: center; font-family: var(--mono); font-size: 9px; letter-spacing: .1em;
-    border: 1px solid var(--line); border-radius: 3px; padding: 1px 10px; color: var(--dim);
-  }
-  .rnd.on { color: var(--amber); border-color: var(--amber); }
-
-  /* mapped parameter bar under mock */
-  .paramdemo { width: 760px; max-width: 100%; margin: 18px auto 0; }
-  .paramdemo .pd-label {
-    display: flex; justify-content: space-between; font-family: var(--mono);
-    font-size: 11px; color: var(--dim); margin-bottom: 6px;
-  }
-  .pd-track { height: 8px; background: #262626; border-radius: 4px; overflow: hidden; }
-  .pd-fill {
-    height: 100%; background: var(--cyan); border-radius: 4px;
-    transform-origin: left; animation: envl 2.4s infinite;
-  }
-  @keyframes envl {
-    0%       { transform: scaleX(0.05); }
-    1.5%     { transform: scaleX(1); }
-    30%      { transform: scaleX(0.05); }
-    40%      { transform: scaleX(0.05); }
-    41.5%    { transform: scaleX(0.85); }
-    65%      { transform: scaleX(0.05); }
-    75%      { transform: scaleX(0.05); }
-    76.5%    { transform: scaleX(1); }
-    98%      { transform: scaleX(0.05); }
-    100%     { transform: scaleX(0.05); }
+  /* ---------- device screenshot ---------- */
+  .shot {
+    display: block; width: min(860px, 100%); height: auto; margin: 24px auto 0;
+    border-radius: 6px; border: 1px solid #000;
+    box-shadow: 0 24px 60px rgba(0,0,0,.5);
   }
   .caption { text-align: center; font-size: 13px; color: var(--dim); margin-top: 14px; }
 
@@ -204,81 +113,8 @@
 </header>
 
 <div class="wrap">
-  <div class="mock-scroll">
-    <div class="device" aria-label="Mock of the Bonko device UI">
-      <div class="titlebar"><span class="orb"></span>Bonko</div>
-      <div class="panel">
-        <div class="module detect">
-          <div class="mod-title">BONKO DETECT</div>
-          <div class="detect-row">
-            <div class="meter">
-              <i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i>
-              <i class="on"></i><i class="hot"></i><i></i><i></i><i></i><i></i>
-            </div>
-            <div class="led"></div>
-            <div class="knob" style="--fill:55"><div class="cap"></div><label>Focus</label><span class="val">3.25 kHz</span></div>
-          </div>
-          <div class="knobs">
-            <div class="knob" style="--fill:65"><div class="cap"></div><label>Sens</label><span class="val">65 %</span></div>
-            <div class="knob" style="--fill:20"><div class="cap"></div><label>Retrig</label><span class="val">60 ms</span></div>
-          </div>
-        </div>
-
-        <div class="module">
-          <div class="maprow"><span class="mapbtn">Map</span><span class="maplabel mapped">Dry/Wet</span></div>
-          <div class="knobs">
-            <div class="knob" style="--fill:100"><div class="cap"></div><label>Prob</label><span class="val">100 %</span></div>
-            <div class="knob" style="--fill:5"><div class="cap"></div><label>Atk</label><span class="val">1 ms</span></div>
-            <div class="knob" style="--fill:35"><div class="cap"></div><label>Dec</label><span class="val">250 ms</span></div>
-            <div class="knob" style="--fill:0"><div class="cap"></div><label>Min</label><span class="val">0 %</span></div>
-            <div class="knob" style="--fill:100"><div class="cap"></div><label>Max</label><span class="val">100 %</span></div>
-          </div>
-          <span class="rnd">RND</span>
-        </div>
-
-        <div class="module">
-          <div class="maprow"><span class="mapbtn">Map</span><span class="maplabel mapped">Frequency</span></div>
-          <div class="knobs">
-            <div class="knob" style="--fill:50"><div class="cap"></div><label>Prob</label><span class="val">50 %</span></div>
-            <div class="knob" style="--fill:15"><div class="cap"></div><label>Atk</label><span class="val">12 ms</span></div>
-            <div class="knob" style="--fill:70"><div class="cap"></div><label>Dec</label><span class="val">1.2 s</span></div>
-            <div class="knob" style="--fill:20"><div class="cap"></div><label>Min</label><span class="val">20 %</span></div>
-            <div class="knob" style="--fill:90"><div class="cap"></div><label>Max</label><span class="val">90 %</span></div>
-          </div>
-          <span class="rnd on">RND</span>
-        </div>
-
-        <div class="module">
-          <div class="maprow"><span class="mapbtn">Map</span><span class="maplabel mapped">Grain Size</span></div>
-          <div class="knobs">
-            <div class="knob" style="--fill:75"><div class="cap"></div><label>Prob</label><span class="val">75 %</span></div>
-            <div class="knob" style="--fill:40"><div class="cap"></div><label>Atk</label><span class="val">80 ms</span></div>
-            <div class="knob" style="--fill:55"><div class="cap"></div><label>Dec</label><span class="val">600 ms</span></div>
-            <div class="knob" style="--fill:100"><div class="cap"></div><label>Min</label><span class="val">100 %</span></div>
-            <div class="knob" style="--fill:10"><div class="cap"></div><label>Max</label><span class="val">10 %</span></div>
-          </div>
-          <span class="rnd">RND</span>
-        </div>
-
-        <div class="module">
-          <div class="maprow"><span class="mapbtn">Map</span><span class="maplabel">Map a parameter</span></div>
-          <div class="knobs">
-            <div class="knob" style="--fill:100"><div class="cap"></div><label>Prob</label><span class="val">100 %</span></div>
-            <div class="knob" style="--fill:5"><div class="cap"></div><label>Atk</label><span class="val">1 ms</span></div>
-            <div class="knob" style="--fill:35"><div class="cap"></div><label>Dec</label><span class="val">250 ms</span></div>
-            <div class="knob" style="--fill:0"><div class="cap"></div><label>Min</label><span class="val">0 %</span></div>
-            <div class="knob" style="--fill:100"><div class="cap"></div><label>Max</label><span class="val">100 %</span></div>
-          </div>
-          <span class="rnd">RND</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="paramdemo">
-    <div class="pd-label"><span>Reverb → Dry/Wet</span><span>mapped</span></div>
-    <div class="pd-track"><div class="pd-fill"></div></div>
-  </div>
+  <img class="shot" src="bonko-device.png" width="1418" height="382"
+    alt="The Bonko device in Ableton Live: a Bonko Detect section with Focus, Sens and Retrig dials beside four slots mapped to Amount, DryWet, Freeze On and Dry/Wet, each with Prob, Atk, Dec, Min and Max dials and an active Rnd toggle.">
   <p class="caption">Every pick attack fires the LED — and every mapped parameter follows.</p>
 </div>
 
